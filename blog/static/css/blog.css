@@ -20,6 +20,8 @@ h1, h2, h3, h4 {
 
 .date {
     color: turquoise;
+    float: right;
+    margin-right: 20px;
 }
 
 .save {
@@ -43,4 +45,9 @@ h1, h2, h3, h4 {
 
 .post h1 a, .post h1 a:visited {
     color: #000000;
+}
+
+#right {
+    float: right;
+    margin-right: 20px;
 }

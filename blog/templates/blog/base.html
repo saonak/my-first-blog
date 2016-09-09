@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load markdown_deux_tags %}
+
 <html>
     <head>
         <title>Django Girls blog</title>
@@ -28,6 +30,12 @@
 	        </div>
 	    </div>
 	</div>
+
+{% markdown %}        {# can omit "STYLE" to use the "default" style #}
+>> This is some **cool**
+[Markdown](http://daringfireball.net/projects/markdown/)
+text here.
+{% endmarkdown %}
 
     </body>
 </html>

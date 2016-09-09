@@ -1,5 +1,6 @@
 .page-header {
-    background-color: #ff9400;
+#    background-color: #ff9400;
+    background-color: orange;
     margin-top: 0;
     padding: 20px 20px 20px 40px;
 }
@@ -47,7 +48,15 @@ h1, h2, h3, h4 {
     color: #000000;
 }
 
+.title h1 a, .title h1 a:visited {
+    color: #20c090;
+}
+
+.title h1 {
+    color: #20c090;
+}
 #right {
     float: right;
     margin-right: 20px;
 }
+

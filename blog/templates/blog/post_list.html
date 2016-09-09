@@ -1,4 +1,5 @@
 {% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
 
 {% block content %}
     {% for post in posts %}
@@ -6,8 +7,14 @@
             <div class="date">
                 <p>published: {{ post.published_date }} by {{ post.author.first_name }}</p>
             </div>
+			<div class="title">
             <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-            <p>{{ post.text|linebreaksbr }}</p>
+			</div>
+			{% if post.f_choice == 'MARKDOWN' %}
+	            <p>{{ post.text|truncatechars:50 | markdown }}</p>
+			{% else %}
+		        <p>{{ post.text|truncatechars:50 | linebreaksbr }}</p>
+			{% endif %}
 			<p> <font color = "cream">({{post.pk}}) </font></p>
         </div>
     {% endfor %}

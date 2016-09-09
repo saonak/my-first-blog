@@ -11,7 +11,7 @@
 
 		{% if post.published_date %}
 		    <div class="date">
-		        {{ post.published_date }} - {{ post.author }}
+		        {{ post.published_date }} - {{ post.author.first_name }}
 		    </div>
 		{% else %}
 		    <a class="btn btn-default" id="right" href="{% url 'post_publish' pk=post.pk %}">Publish</a>

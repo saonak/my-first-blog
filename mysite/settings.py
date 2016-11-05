@@ -25,7 +25,7 @@ SECRET_KEY = '!eq$d)6_(q9=z!zh=qp*^5=5!=66ni+d0(hy0y2r6o5q&@+8sb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['form2log4test.pythonanywhere.com']
 
 
 # Application definition

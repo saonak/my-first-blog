@@ -1,6 +1,6 @@
 .page-header {
 #    background-color: #ff9400;
-    background-color: orange;
+    background-color: lightskyblue;
     margin-top: 0;
     padding: 20px 20px 20px 40px;
 }
@@ -60,3 +60,6 @@ h1, h2, h3, h4 {
     margin-right: 20px;
 }
 
+.comment {
+    margin: 20px 0px 20px 20px;
+}

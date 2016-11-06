@@ -3,6 +3,7 @@ __pycache__
 myvenv
 db.sqlite3
 /static
+migrations
 .DS_Store
 *.bak
 *.BAK

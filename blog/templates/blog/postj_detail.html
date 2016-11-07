@@ -1,0 +1,58 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+    <div class="post">
+		{% if user.is_authenticated %}
+            {% if user.username == 'admin' or user.username == post.author.username %}
+                <a class="btn btn-default" id="right" href="{% url 'postJ_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                <a class="btn btn-default" id="right" href="{% url 'postJ_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+            {% endif %}
+        {% else %}
+	        <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
+		{% endif %}
+
+		{% if post.published_date %}
+		    <div class="date">
+		        {{ post.published_date }} - {{ post.author.first_name }}
+		    </div>
+		{% else %}
+		    <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>
+		{% endif %}
+
+		<div class="title">
+        <h1>{{ post.title }}</h1>
+		</div>
+		<div class="title">
+        <h2>{{ post.subtitle }}</h2>
+		</div>
+		{% if post.f_choice == 'MARKDOWN' %}
+            <p>{{ post.text| markdown }}</p>
+		{% else %}
+	        <p>{{ post.text| linebreaksbr }}</p>
+		{% endif %}
+
+		<p> <font color = "cream">({{post.pk}}) </font></p>
+
+    </div>
+    <hr>
+    <h4><font color="#00bfff">Comments:</font></h4>
+    <a class="btn btn-default" href="{% url 'add_comment_to_postJ' pk=post.pk %}">Add comment</a>
+    {% for comment in post.comments.all %}
+        {% if user.is_authenticated or comment.approved_comment %}
+        <div class="comment">
+            <div class="date">
+                {{ comment.created_date }}
+                {% if not comment.approved_comment %}
+                    <a class="btn btn-default" href="{% url 'commentJ_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a class="btn btn-default" href="{% url 'commentJ_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok"></span></a>
+                {% endif %}
+            </div>
+            <strong>{{ comment.author }}</strong>
+            <p>{{ comment.text|linebreaks }}</p>
+        </div>
+        {% endif %}
+    {% empty %}
+        <p>No comments here yet :(</p>
+    {% endfor %}
+{% endblock %}

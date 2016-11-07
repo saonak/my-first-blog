@@ -3,12 +3,19 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import Post
-from .models import Post2, Comment, Title
+from .models import Post2, Comment
+from .models import Title, PostJ, CommentJ
 from .forms import PostForm
-from .forms import PostForm2, CommentForm, TitleForm
+from .forms import PostForm2, CommentForm
+from .forms import TitleForm, PostJForm, CommentJForm
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
+
+# Global parameter
+currentPK = 1  # PK number for current topic
+topic_num = 4  # how many of the subtitle
 
 # Create your views here.
 
@@ -150,32 +157,111 @@ def comment_remove(request, pk):
     return redirect('post_detail', pk=post_pk)
 
 def title_list(request):
-    titles = Title.objects.all()
-    return render(request, 'blog/title_list.html', {'titles': titles})
+    try:
+        title = Title.objects.get(pk=currentPK)
+    except ObjectDoesNotExist:
+        title = None
+
+    return render(request, 'blog/title_list.html', {'title': title})
 
 @login_required
 def title_edit(request):
-    ex_flag =0
     try:
-        titles = Title.objects.get(pk=1);
-    except:
-        ex_flag=1
+        title = Title.objects.get(pk=currentPK)
+    except ObjectDoesNotExist:
+        title = None
     if request.method == "POST":
-        if ex_flag== 1:
+        if title == None:
             form = TitleForm(request.POST)
         else:
-            form = TitleForm(request.POST, instance=titles)
+            form = TitleForm(request.POST, instance=title)
         if form.is_valid():
             titles = form.save(commit=False)
             titles.author = request.user
-            titles.pk = 1
+            titles.pk = currentPK
             titles.save()
             titles.publish()
             return redirect('title_list')
     else:
-        if ex_flag == 1:
+        if title == None:
             form = TitleForm()
         else:
-            form = TitleForm(instance=titles)
+            form = TitleForm(instance=title)
     return render(request, 'blog/title_edit.html', {'form': form})
 
+def postJ_detail(request, idx):
+    index = int(idx)
+    try:
+        post = PostJ.objects.get(pk=((currentPK-1)*topic_num+index))
+    except ObjectDoesNotExist:
+        if   index == 1:
+            subttl = Title.objects.get(pk=currentPK).subtitle1
+        elif index == 2:
+            subttl = Title.objects.get(pk=currentPK).subtitle2
+        elif index == 3:
+            subttl = Title.objects.get(pk=currentPK).subtitle3
+        else: # index==4:
+            subttl = Title.objects.get(pk=currentPK).subtitle4
+        post = PostJ.objects.create(author = request.user,
+                                    title = Title.objects.get(pk=currentPK).title,
+                                    subtitle = subttl,
+                                    pk=((currentPK-1)*topic_num+index))
+    return render(request, 'blog/postj_detail.html', {'post': post})
+
+@login_required
+def postJ_edit(request, pk):
+    post = get_object_or_404(PostJ, pk=pk)
+    if request.method == "POST":
+        form = PostJForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            index = int(post.pk) % topic_num
+            return redirect('postJ_detail', idx=str(index))
+    else:
+        form = PostJForm(instance=post)
+    return render(request, 'blog/postj_edit.html', {'form': form})
+
+@login_required
+def postJ_publish(request, pk):
+    post = get_object_or_404(PostJ, pk=pk)
+    post.publish()
+    index = int(pk)%topic_num
+    return redirect('postJ_detail', idx=str(index))
+
+@login_required
+def postJ_remove(request, pk):
+    post = get_object_or_404(PostJ, pk=pk)
+    post.delete()
+    index = int(pk)%topic_num
+    return redirect('postJ_detail', idx=str(index))
+
+def add_comment_to_postJ(request, pk):
+    post = get_object_or_404(PostJ, pk=pk)
+    if request.method == "POST":
+        form = CommentJForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            index = int(post.pk) % topic_num
+            return redirect('postJ_detail', idx=str(index))
+    else:
+        form = CommentJForm()
+    return render(request, 'blog/add_comment_to_post.html', {'form': form})
+
+@login_required
+def commentJ_approve(request, pk):
+    comment = get_object_or_404(CommentJ, pk=pk)
+    comment.approve()
+    index = int(comment.post.pk)%topic_num
+    return redirect('postJ_detail', idx=str(index))
+
+@login_required
+def commentJ_remove(request, pk):
+    comment = get_object_or_404(CommentJ, pk=pk)
+    index = int(comment.post.pk)%topic_num
+    comment.delete()
+    return redirect('postJ_detail', idx=str(index))

@@ -2,8 +2,8 @@
 {% load markdown_deux_tags %}
 
 {% block content %}
-    {% if titles.count > 0 %}
-        {% for title in titles %}
+    {% if title != None %}
+{#        {% for title in titles %}#}
             <div class="title">
                 <div class="title">
                 <h1> Title: {{ title.title }}</h1>
@@ -28,7 +28,7 @@
                     <a class="btn btn-default" id="right" href="{% url 'title_edit'%}">edit</a>
                 {% endif %}
             </div>
-        {% endfor %}
+{#        {% endfor %}#}
     {% else %}
         <div class="title">
             <h1> Title: 大項目 ... 問題を入力して下さい。</h1>

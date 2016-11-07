@@ -22,10 +22,10 @@
         <h1><a href="/">Active Learning - Jigsaw</a></h1>
 		{% if user.is_authenticated %}
             <a class="btn btn-default" id="left" href="{% url 'title_list' %}">Title</a>
-            <a class="btn btn-default" id="left" href="{% url 'post_new' %}">1</a>
-            <a class="btn btn-default" id="left" href="{% url 'post_new' %}">2</a>
-            <a class="btn btn-default" id="left" href="{% url 'post_new' %}">3</a>
-            <a class="btn btn-default" id="left" href="{% url 'post_new' %}">4</a>
+            <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=1 %}">1</a>
+            <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=2 %}">2</a>
+            <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=3 %}">3</a>
+            <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=4 %}">4</a>
             <a class="btn btn-default" id="left" href="{% url 'post_new' %}">Presentation</a>
         {% endif %}
     </div>

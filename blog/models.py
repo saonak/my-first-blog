@@ -28,10 +28,8 @@ class Post2(models.Model):
     title = models.CharField(max_length=200)
     f_choice =  models.CharField(max_length=8, choices=FMT_CHOICES, default='TEXT',)
     text = models.TextField()
-    created_date = models.DateTimeField(
-            default=timezone.now)
-    published_date = models.DateTimeField(
-            blank=True, null=True)
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
 
     def publish(self):
         self.published_date = timezone.now()
@@ -57,3 +55,22 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+class Title(models.Model):
+    author = models.ForeignKey('auth.User')
+    title     = models.CharField(max_length=200)
+    subtitle1 = models.CharField(max_length=200)
+    subtitle2 = models.CharField(max_length=200)
+    subtitle3 = models.CharField(max_length=200)
+    subtitle4 = models.CharField(max_length=200)
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.title
+
+

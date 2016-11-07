@@ -3,9 +3,9 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import Post
-from .models import Post2, Comment
+from .models import Post2, Comment, Title
 from .forms import PostForm
-from .forms import PostForm2, CommentForm
+from .forms import PostForm2, CommentForm, TitleForm
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -148,3 +148,34 @@ def comment_remove(request, pk):
     post_pk = comment.post.pk
     comment.delete()
     return redirect('post_detail', pk=post_pk)
+
+def title_list(request):
+    titles = Title.objects.all()
+    return render(request, 'blog/title_list.html', {'titles': titles})
+
+@login_required
+def title_edit(request):
+    ex_flag =0
+    try:
+        titles = Title.objects.get(pk=1);
+    except:
+        ex_flag=1
+    if request.method == "POST":
+        if ex_flag== 1:
+            form = TitleForm(request.POST)
+        else:
+            form = TitleForm(request.POST, instance=titles)
+        if form.is_valid():
+            titles = form.save(commit=False)
+            titles.author = request.user
+            titles.pk = 1
+            titles.save()
+            titles.publish()
+            return redirect('title_list')
+    else:
+        if ex_flag == 1:
+            form = TitleForm()
+        else:
+            form = TitleForm(instance=titles)
+    return render(request, 'blog/title_edit.html', {'form': form})
+

@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Post
-from .models import Post2, Comment
+from .models import Post2, Comment, Title
 
 
 class PostForm(forms.ModelForm):
@@ -22,3 +22,10 @@ class CommentForm(forms.ModelForm):
         model = Comment
 #        fields = ('author', 'text',)
         fields = ('text',)
+
+class TitleForm(forms.ModelForm):
+
+    class Meta:
+        model = Title
+#        fields = ('author', 'text',)
+        fields = ('title','subtitle1','subtitle2','subtitle3','subtitle4')

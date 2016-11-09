@@ -1,0 +1,83 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        {% if presen == None %}
+            <a class="btn btn-default" id="right" href="{% url 'presen_new' %}"><span class="glyphicon glyphicon-plus"></span></a>
+            <div class="note">
+                <p>書き込みを始める時⇒</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="title">
+    <h1>Topic: {{ title.title }}</h1>
+    </div>
+{#    <div class="subtitle">#}
+{#        <h4>1. {{ title.subtitle1 }}</h4>#}
+{#        <h4>2. {{ title.subtitle2 }}</h4>#}
+{#        <h4>3. {{ title.subtitle3 }}</h4>#}
+{#        <h4>4. {{ title.subtitle4 }}</h4>#}
+{#    </div>#}
+
+    <p>プレゼンテーション用の資料を作成してみよう</p>
+    <br>
+
+    {% if presen != None %}
+        <div class="onepost">
+            <div class="post">
+                {% if user.is_authenticated%}
+                    {#                {% if user.username == 'admin' or user.username == post.author.username %}#}
+                    <a class="btn btn-default" id="right" href="{% url 'presen_remove' pk=presen.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a class="btn btn-default" id="right" href="{% url 'presen_edit' pk=presen.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+{#                    <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>#}
+                    {#                {% endif %}#}
+                {% else %}
+                    <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
+                {% endif %}
+
+                <br><p>  </p> <br>
+                <div class="box_presen">
+                    {% if presen.f_choice == 'MARKDOWN' %}
+                        <p>{{ presen.text| markdown }}</p>
+                    {% else %}
+                        <p>{{ presen.text| linebreaksbr }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="date">
+                    {{ presen.created_date }} - modified by {{ presen.author.first_name }} {{ presen.author.last_name }}
+                </div>
+                <p> <font color = "cream">({{presen.pk}}) </font></p>
+
+            </div>
+
+            <h4><font color="#00bfff">Comments:</font></h4>
+
+            <a class="btn btn-default" href="{% url 'add_comment_to_presen' pk=presen.pk %}">Add comment</a>
+            {% for comment in presen.comments.all %}
+{#                {% if user.is_authenticated or comment.approved_comment %}#}
+                    <div class="comment">
+                        <div class="date">
+                            {{ comment.created_date }}
+                            {% if not comment.approved_comment %}
+                                <a class="btn btn-default" href="{% url 'commentP_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a class="btn btn-default" href="{% url 'commentP_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok"></span></a>
+                            {% endif %}
+                        </div>
+                        <strong>{{ comment.author.first_name }}{{ comment.author.last_name }}</strong>
+                        <p>{{ comment.text|linebreaks }}</p>
+                    </div>
+{#                {% endif %}#}
+            {% empty %}
+                <p>No comments here yet :(</p>
+            {% endfor %}
+
+        </div>
+    {% else %}
+                    <p> ... </p>
+    {% endif %}
+
+{% endblock %}

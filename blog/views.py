@@ -4,10 +4,10 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import Post
 from .models import Post2, Comment
-from .models import Title, PostJ, CommentJ
+from .models import Title, PostJ, CommentJ, Presentation, Test, CommentP
 from .forms import PostForm
 from .forms import PostForm2, CommentForm
-from .forms import TitleForm, PostJForm, CommentJForm
+from .forms import TitleForm, PostJForm, CommentJForm, PresentationForm, TestForm, CommentPForm
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -193,23 +193,6 @@ def title_edit(request):
 def title_err(request):
     return render(request, 'blog/title_err.html', {})
 
-def postJ_presentation(request):
-    try:
-        title = Title.objects.get(pk=currentPK)
-    except ObjectDoesNotExist:
-        return redirect('title_err')
-
-    post_list = []
-    for i in range(1,5):
-        try:
-            post = ((PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=str(i)).filter(published_date__isnull=False).latest('published_date')) )
-            post_list.append(post)
-        except ObjectDoesNotExist:
-            post = None
-
-    posts = iter(list(post_list))
-    return render(request, 'blog/postj_presentation.html', {'posts': posts, 'title': title })
-
 def postJ_detail(request, idx):
     index = int(idx)
     try:
@@ -217,23 +200,27 @@ def postJ_detail(request, idx):
     except ObjectDoesNotExist:
         return redirect('title_err')
 
+    admin_u = User.objects.get(username='admin')
+
     pbtn = 0
     post_list = []
-    try:
-        # posts = ((PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(or(author_org=User.objects.get(username='admin').latest('created_date'))
-        #           Q(PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=User.objects.get(username='c')).latest('created_date')) )
-        # posts = (Q(PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=User.objects.get(username='admin'))) |
-        #          Q(PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=User.objects.get(username='c'))) )
-        post = ((PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=User.objects.get(username='admin')).latest('created_date')) )
-        post_list.append(post)
-    except ObjectDoesNotExist:
-        post = None
 
-    try:
-        post = ((PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=User.objects.get(username='c')).latest('created_date')) )
-        post_list.append(post)
-    except ObjectDoesNotExist:
-        post = None
+    if request.user == admin_u:
+        users = User.objects.all()
+        for user in users:
+            try:
+                post = ((PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=user).latest('created_date')))
+                post_list.append(post)
+            except ObjectDoesNotExist:
+                post = None
+    else:
+        for group in request.user.groups.all():
+            for user in group.user_set.all():
+                try:
+                    post = ((PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=user).latest('created_date')))
+                    post_list.append(post)
+                except ObjectDoesNotExist:
+                    post = None
 
     try:
         postfind = PostJ.objects.filter(ttl_index=str(currentPK)).filter(sub_index=idx).filter(author_org=request.user).latest('created_date')
@@ -338,3 +325,178 @@ def commentJ_remove(request, pk):
     idx = comment.post.sub_index
     comment.delete()
     return redirect('postJ_detail', idx=idx)
+
+def presen_detail(request):
+    try:
+        title = Title.objects.get(pk=currentPK)
+    except ObjectDoesNotExist:
+        return redirect('title_err')
+
+    try:
+        presen = ((Presentation.objects.filter(ttl_index=str(currentPK)).latest('created_date')) )
+    except ObjectDoesNotExist:
+        presen = None
+
+    return render(request, 'blog/presen_detail.html', {'presen': presen, 'title': title })
+
+@login_required
+def presen_new(request):
+    title = get_object_or_404(Title, pk=currentPK)
+    if request.method == "POST":
+        form = PresentationForm(request.POST)
+        if form.is_valid():
+            presen = form.save(commit=False)
+            presen.author = request.user
+            presen.title_obj = title
+            presen.ttl_index = str(currentPK)
+            presen.save()
+            return redirect('presen_detail')
+    else:
+        form = PresentationForm()
+    return render(request, 'blog/presen_edit.html', {'form': form})
+
+@login_required
+def presen_edit(request, pk):
+    presen = get_object_or_404(Presentation, pk=pk)
+    if request.method == "POST":
+        form1 = PresentationForm(request.POST, instance=presen)
+        form2 = PresentationForm()
+        if form1.is_valid():
+            presen1 = form1.save(commit=False)
+            presen2 = form2.save(commit=False)
+            presen2.author = request.user
+            presen2.title_obj = presen1.title_obj
+            presen2.ttl_index = presen1.ttl_index
+            presen2.f_choice = presen1.f_choice
+            presen2.text = presen1.text
+            presen2.save()
+            for comment in CommentP.objects.filter(presen=presen):
+                comment.presen = presen2
+                comment.save()
+
+            return redirect('presen_detail')
+    else:
+        form = PresentationForm(instance=presen)
+    return render(request, 'blog/presen_edit.html', {'form': form})
+
+@login_required
+def presen_publish(request, pk):
+    presen = get_object_or_404(Presentation, pk=pk)
+    presen.publish()
+    return redirect('presen_detail')
+
+@login_required
+def presen_remove(request, pk):
+    presen = get_object_or_404(Presentation, pk=pk)
+    presen.delete()
+    return redirect('presen_detail')
+
+def add_comment_to_presen(request, pk):
+    presen = get_object_or_404(Presentation, pk=pk)
+    if request.method == "POST":
+        form = CommentPForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.presen = presen
+            comment.save()
+            return redirect('presen_detail')
+    else:
+        form = CommentPForm()
+    return render(request, 'blog/add_comment_to_presen.html', {'form': form})
+
+@login_required
+def commentP_approve(request, pk):
+    comment = get_object_or_404(CommentP, pk=pk)
+    comment.approve()
+    return redirect('presen_detail')
+
+@login_required
+def commentP_remove(request, pk):
+    comment = get_object_or_404(CommentP, pk=pk)
+    comment.delete()
+    return redirect('presen_detail')
+
+@login_required
+def test_detail(request, kind):
+    try:
+        title = Title.objects.get(pk=currentPK)
+    except ObjectDoesNotExist:
+        return redirect('title_err')
+
+    admin_u = User.objects.get(username='admin')
+
+    test_list = []
+    pbtn = 0
+
+    if request.user == admin_u:
+        users = User.objects.all()
+        for user in users:
+            try:
+                test = ((Test.objects.filter(ttl_index=str(currentPK)).filter(test_kind=kind).filter(author=user).latest('created_date')))
+                test_list.append(test)
+            except ObjectDoesNotExist:
+                test = None
+    else:
+        try:
+            test = ((Test.objects.filter(ttl_index=str(currentPK)).filter(test_kind=kind).filter(author=request.user).latest('created_date')) )
+            test_list.append(test)
+        except ObjectDoesNotExist:
+            pbtn = 1
+
+    tests = iter(list(test_list))
+
+    return render(request, 'blog/test_detail.html', {'tests': tests, 'title': title, 'kind': kind, 'pbtn': pbtn })
+
+@login_required
+def test_new(request, kind):
+    title = get_object_or_404(Title, pk=currentPK)
+    if request.method == "POST":
+        form = TestForm(request.POST)
+        if form.is_valid():
+            test = form.save(commit=False)
+            test.author = request.user
+            test.title_obj = title
+            test.ttl_index = str(currentPK)
+            test.test_kind = kind
+            test.save()
+            return redirect('test_detail', kind=kind)
+    else:
+        form = TestForm()
+    return render(request, 'blog/test_edit.html', {'form': form})
+
+@login_required
+def test_edit(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    if request.method == "POST":
+        form1 = TestForm(request.POST, instance=test)
+        form2 = TestForm()
+        if form1.is_valid():
+            test1 = form1.save(commit=False)
+            test2 = form2.save(commit=False)
+            test2.author = request.user
+            test2.title_obj = test1.title_obj
+            test2.ttl_index = test1.ttl_index
+            test2.f_choice = test1.f_choice
+            test2.text = test1.text
+            test2.test_kind = test1.test_kind
+            test2.save()
+            return redirect('test_detail', kind=test2.test_kind)
+    else:
+        form = TestForm(instance=test)
+    return render(request, 'blog/test_edit.html', {'form': form})
+
+@login_required
+def test_publish(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    test.publish()
+    return redirect('test_detail', kind=test.test_kind)
+
+@login_required
+def test_remove(request, pk):
+    test = get_object_or_404(Test, pk=pk)
+    kind = test.title_kind
+    test.delete()
+    return redirect('test_detail', kind=kind)
+
+

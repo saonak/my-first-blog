@@ -1,0 +1,69 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        {% if pbtn == 1 %}
+            <a class="btn btn-default" id="right" href="{% url 'test_new' kind=kind %}"><span class="glyphicon glyphicon-plus"></span></a>
+            <div class="note">
+                <p>書き込みを始める時⇒</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="title">
+    <h1>Topic: {{ title.title }}</h1>
+    </div>
+    {% if kind == '1' %}
+        <h3>授業前に知っている事:</h3>
+    {% else %}
+        <h3>授業後に知っている事:</h3>
+    {% endif %}
+    <p>注) このページが見れるのは自分と先生だけです。</p>
+{#    <div class="subtitle">#}
+{#        <h4>1. {{ title.subtitle1 }}</h4>#}
+{#        <h4>2. {{ title.subtitle2 }}</h4>#}
+{#        <h4>3. {{ title.subtitle3 }}</h4>#}
+{#        <h4>4. {{ title.subtitle4 }}</h4>#}
+{#    </div>#}
+
+    {% for test in tests %}
+        <div class="onepost">
+            <div class="post">
+                {% if user.is_authenticated%}
+                    {#                {% if user.username == 'admin' or user.username == post.author.username %}#}
+                    <a class="btn btn-default" id="right" href="{% url 'test_remove' pk=test.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a class="btn btn-default" id="right" href="{% url 'test_edit' pk=test.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+{#                    <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>#}
+                    {#                {% endif %}#}
+                {% else %}
+                    <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
+                {% endif %}
+
+                <div class = "author_org">
+                    <h3>{{ test.author.first_name }} {{ test.author.last_name }}</h3>
+                </div>
+                <br><p>  </p> <br>
+
+                <div class="box">
+                    {% if test.f_choice == 'MARKDOWN' %}
+                        <p>{{ test.text| markdown }}</p>
+                    {% else %}
+                        <p>{{ test.text| linebreaksbr }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="date">
+                    {{ test.created_date }} - modified by {{ test.author.first_name }} {{ test.author.last_name }}
+                </div>
+                <p> <font color = "cream">({{test.pk}}) </font></p>
+
+            </div>
+
+        </div>
+    {% empty %}
+                    <p> ... </p>
+    {% endfor %}
+
+{% endblock %}

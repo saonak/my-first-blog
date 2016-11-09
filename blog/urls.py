@@ -2,7 +2,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.postJ_presentation, name='postJ_presentation'),
+    url(r'^$', views.presen_detail, name='presen_detail'),
     url(r'^post/(?P<pk>\d+)/$', views.post_detail2, name='post_detail'),
     url(r'^post/new/$', views.post_new2, name='post_new'),
     url(r'^post/(?P<pk>\d+)/edit/$', views.post_edit2, name='post_edit'),
@@ -15,7 +15,6 @@ urlpatterns = [
     url(r'^title$', views.title_list, name='title_list'),
     url(r'^title/edit/$', views.title_edit, name='title_edit'),
     url(r'^title/err/$', views.title_err, name='title_err'),
-    url(r'^postj/presen/$', views.postJ_presentation, name='postJ_presentation'),
     url(r'^postj/(?P<idx>\d+)$', views.postJ_detail, name='postJ_detail'),
     url(r'^postj/(?P<pk>\d+)/edit/$', views.postJ_edit, name='postJ_edit'),
     url(r'^postj/(?P<idx>\d+)/new/$', views.postJ_new, name='postJ_new'),
@@ -24,5 +23,18 @@ urlpatterns = [
     url(r'^postj/(?P<pk>\d+)/comment/$', views.add_comment_to_postJ, name='add_comment_to_postJ'),
     url(r'^commentj/(?P<pk>\d+)/approve/$', views.commentJ_approve, name='commentJ_approve'),
     url(r'^commentj/(?P<pk>\d+)/remove/$', views.commentJ_remove, name='commentJ_remove'),
+    url(r'^presen/$', views.presen_detail, name='presen_detail'),
+    url(r'^presen/(?P<pk>\d+)/edit/$', views.presen_edit, name='presen_edit'),
+    url(r'^presen/new/$', views.presen_new, name='presen_new'),
+    url(r'^presen/(?P<pk>\d+)/publish/$', views.presen_publish, name='presen_publish'),
+	url(r'^presen/(?P<pk>\d+)/remove/$', views.presen_remove, name='presen_remove'),
+    url(r'^presen/(?P<pk>\d+)/comment/$', views.add_comment_to_presen, name='add_comment_to_presen'),
+    url(r'^commentP/(?P<pk>\d+)/approve/$', views.commentP_approve, name='commentP_approve'),
+    url(r'^commentP/(?P<pk>\d+)/remove/$', views.commentP_remove, name='commentP_remove'),
+    url(r'^test/(?P<kind>\d+)/test$', views.test_detail, name='test_detail'),
+    url(r'^test/(?P<pk>\d+)/edit/$', views.test_edit, name='test_edit'),
+    url(r'^test/(?P<kind>\d+)/new/$', views.test_new, name='test_new'),
+    url(r'^test/(?P<pk>\d+)/publish/$', views.test_publish, name='test_publish'),
+	url(r'^test/(?P<pk>\d+)/remove/$', views.test_remove, name='test_remove'),
 ]
 

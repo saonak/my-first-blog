@@ -1,6 +1,6 @@
 from django.contrib import admin
 # from .models import Post, Post2, Comment
-from .models import Title, PostJ, CommentJ
+from .models import Title, PostJ, CommentJ, Presentation, CommentP, Test
 
 # Register your models here.
 
@@ -10,4 +10,6 @@ from .models import Title, PostJ, CommentJ
 admin.site.register(Title)
 admin.site.register(PostJ)
 admin.site.register(CommentJ)
-
+admin.site.register(Presentation)
+admin.site.register(CommentP)
+admin.site.register(Test)

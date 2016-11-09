@@ -20,14 +20,18 @@
         <h1>{{ idx }}. {{ title.subtitle4 }}</h1>
     {% endif %}
     </div>
-    <br>
+
+    <p>エキスパート・グループで学習した内容を書き込もう。</p>
+    <p>ホーム・グループに帰って説明したり、議論してみよう。</p>
+　  <br>
+
     {% for post in posts %}
         <div class="onepost"> <div class="post">
             {% if user.is_authenticated%}
 {#                {% if user.username == 'admin' or user.username == post.author.username %}#}
                 <a class="btn btn-default" id="right" href="{% url 'postJ_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                 <a class="btn btn-default" id="right" href="{% url 'postJ_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>
+{#                <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>#}
 {#                {% endif %}#}
             {% else %}
                 <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
@@ -54,11 +58,11 @@
                 {{ post.created_date }} - modified by {{ post.author_rvs.first_name }} {{ post.author_rvs.last_name }}
             </div>
             <p> <font color = "cream">({{post.pk}}) </font></p>
-    		{% if post.published_date %}
-    		    <div class="date">
-    		        {{ post.published_date }} publised.
-    		    </div>
-    		{% endif %}
+{#    		{% if post.published_date %}#}
+{#    		    <div class="date">#}
+{#    		        {{ post.published_date }} publised.#}
+{#    		    </div>#}
+{#    		{% endif %}#}
         </div>
 
         <h4><font color="#00bfff">Comments:</font></h4>

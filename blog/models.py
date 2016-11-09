@@ -76,9 +76,9 @@ class PostJ(models.Model):
 
     def __str__(self):
         if self.title_obj == None:
-            return "..." + "_" + str(self.sub_index) + "_" + self.author_org + self.author_rvs + "_" + self.pk
+            return "..." + "_" + str(self.sub_index) + "_" + self.author_org.username + "_" + self.author_rvs.username + "_" + self.pk
         else:
-            return self.title_obj.title + "_" + self.sub_index + "_" + "_" + str(self.pk)
+            return self.title_obj.title + "_" + self.sub_index + "_" + self.author_org.username + "_" + self.author_rvs.username + "_" + str(self.pk)
 
     def approved_comments(self):
         return self.comments.filter(approved_comment=True)
@@ -96,7 +96,22 @@ class CommentJ(models.Model):
         self.save()
 
     def __str__(self):
-        return self.post.title_obj.title + "_" + str(self.post.sub_index) + "_" + self.text[0:10] + "_"+ str(self.pk)
+        return self.post.title_obj.title + "_" + self.post.sub_index + "_" + self.author.username + "_" + self.text[0:10] + "_"+ str(self.pk)
+
+class CommentP(models.Model):
+    presen = models.ForeignKey('blog.Presentation', related_name='comments')
+#    author = models.CharField(max_length=200)
+    author = models.ForeignKey('auth.User')
+    text = models.TextField()
+    created_date = models.DateTimeField(default=timezone.now)
+    approved_comment = models.BooleanField(default=False)
+
+    def approve(self):
+        self.approved_comment = True
+        self.save()
+
+    def __str__(self):
+        return self.presen.title_obj.title + "_" + self.author.username + "_" + self.text[0:10] + "_" + str(self.pk)
 
 class Title(models.Model):
     author = models.ForeignKey('auth.User')
@@ -113,4 +128,41 @@ class Title(models.Model):
         self.save()
 
     def __str__(self):
-        return self.title + "_" + str(self.pk)
+        return self.title + "_" + self.author.username + "_" + str(self.pk)
+
+
+class Test(models.Model):
+    author = models.ForeignKey('auth.User')
+    title_obj = models.ForeignKey('blog.Title', related_name='test_ref', default=None)
+    ttl_index = models.CharField(max_length=4, default='1',)
+    test_kind = models.CharField(max_length=8, default='pre',) # pre or post
+    f_choice =  models.CharField(max_length=8, choices=FMT_CHOICES, default='TEXT',)
+    text = models.TextField(default = "")
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.title_obj.title + "_" + self.test_kind + "_" + self.author.username + "_" + str(self.pk)
+
+class Presentation(models.Model):
+    author = models.ForeignKey('auth.User')
+    title_obj = models.ForeignKey('blog.Title', related_name='presen_ref', default=None)
+    ttl_index = models.CharField(max_length=4, default='1',)
+    f_choice =  models.CharField(max_length=8, choices=FMT_CHOICES, default='TEXT',)
+    text = models.TextField(default = "")
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.title_obj.title + "_" + self.author.username + "_" + str(self.pk)
+
+    def approved_comments(self):
+        return self.comments.filter(approved_comment=True)

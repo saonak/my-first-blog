@@ -22,8 +22,22 @@ h1, h2, h3, h4 {
 .date {
     color: turquoise;
     float: right;
-    margin-right: 20px;
+    margin-right: 24px;
+    /*font-size: 16pt;*/
 }
+.note {
+    color: orange;
+    float: right;
+    margin-right: 10px;
+    /*font-size: 10pt;*/
+}
+.author_org {
+    color: indianred;
+    float: right;
+    margin-right: 50px;
+    /*font-size: 10pt;*/
+}
+
 
 .save {
     float: right;
@@ -40,8 +54,11 @@ h1, h2, h3, h4 {
     margin-right: 20px;
 }
 
+.onepost {
+    margin-bottom: 50px;
+}
 .post {
-    margin-bottom: 70px;
+    margin-bottom: 10px;
 }
 
 .post h1 a, .post h1 a:visited {
@@ -49,12 +66,19 @@ h1, h2, h3, h4 {
 }
 
 .title h1 a, .title h1 a:visited {
-    color: #20c090;
+    /*color: #20c090;*/
+    color: blue;
 }
 
-.title h1 {
-    color: #20c090;
+.title {
+    /*color: #20c090;*/
+    color: limegreen;
 }
+.subtitle {
+    /*color: #20c090;*/
+    color: darkslategrey;
+}
+
 #right {
     float: right;
     margin-right: 20px;
@@ -62,4 +86,15 @@ h1, h2, h3, h4 {
 
 .comment {
     margin: 20px 0px 20px 20px;
+    margin-bottom: 10px;
+}
+
+.box {
+	border: 5px solid #fffdc0 ;
+    background: #fffef8;
+}
+
+.box_presen {
+	border: 3px solid #ddffdd ;
+    background: #f9f9fb;
 }

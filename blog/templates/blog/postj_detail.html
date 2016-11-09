@@ -2,57 +2,89 @@
 {% load markdown_deux_tags %}
 
 {% block content %}
-    <div class="post">
-		{% if user.is_authenticated %}
-            {% if user.username == 'admin' or user.username == post.author.username %}
+    {% if pbtn == 1 %}
+        <a class="btn btn-default" id="right" href="{% url 'postJ_new' idx=idx %}"><span class="glyphicon glyphicon-plus"></span></a>
+　      <div class="note"> <p>自分が担当する書き込みを始める時⇒</p></div>
+    {% endif %}
+    <div class="title">
+    <h3>Topic: {{ title.title }}</h3>
+    </div>
+    <div class="subtitle">
+    {% if idx == '1' %}
+        <h1>{{ idx }}. {{ title.subtitle1 }}</h1>
+    {% elif idx == '2' %}
+        <h1>{{ idx }}. {{ title.subtitle2 }}</h1>
+    {% elif idx == '3' %}
+        <h1>{{ idx }}. {{ title.subtitle3 }}</h1>
+    {% else %}
+        <h1>{{ idx }}. {{ title.subtitle4 }}</h1>
+    {% endif %}
+    </div>
+    <br>
+    {% for post in posts %}
+        <div class="onepost"> <div class="post">
+            {% if user.is_authenticated%}
+{#                {% if user.username == 'admin' or user.username == post.author.username %}#}
                 <a class="btn btn-default" id="right" href="{% url 'postJ_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                 <a class="btn btn-default" id="right" href="{% url 'postJ_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>
+{#                {% endif %}#}
+            {% else %}
+                <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
             {% endif %}
-        {% else %}
-	        <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
-		{% endif %}
 
-		{% if post.published_date %}
-		    <div class="date">
-		        {{ post.published_date }} - {{ post.author.first_name }}
-		    </div>
-		{% else %}
-		    <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>
-		{% endif %}
 
-		<div class="title">
-        <h1>{{ post.title }}</h1>
-		</div>
-		<div class="title">
-        <h2>{{ post.subtitle }}</h2>
-		</div>
-		{% if post.f_choice == 'MARKDOWN' %}
-            <p>{{ post.text| markdown }}</p>
-		{% else %}
-	        <p>{{ post.text| linebreaksbr }}</p>
-		{% endif %}
-
-		<p> <font color = "cream">({{post.pk}}) </font></p>
-
-    </div>
-    <hr>
-    <h4><font color="#00bfff">Comments:</font></h4>
-    <a class="btn btn-default" href="{% url 'add_comment_to_postJ' pk=post.pk %}">Add comment</a>
-    {% for comment in post.comments.all %}
-        {% if user.is_authenticated or comment.approved_comment %}
-        <div class="comment">
-            <div class="date">
-                {{ comment.created_date }}
-                {% if not comment.approved_comment %}
-                    <a class="btn btn-default" href="{% url 'commentJ_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
-                    <a class="btn btn-default" href="{% url 'commentJ_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok"></span></a>
-                {% endif %}
+            <div class = "author_org">
+                <h3>担当: {{ post.author_org.first_name }} {{ post.author_org.last_name }}</h3>
             </div>
-            <strong>{{ comment.author }}</strong>
-            <p>{{ comment.text|linebreaks }}</p>
+            <br><p>  </p> <br>
+
+
+            <div class="box">
+
+            {% if post.f_choice == 'MARKDOWN' %}
+                <p>{{ post.text| markdown }}</p>
+            {% else %}
+                <p>{{ post.text| linebreaksbr }}</p>
+            {% endif %}
+
+            </div>
+
+            <div class="date">
+                {{ post.created_date }} - modified by {{ post.author_rvs.first_name }} {{ post.author_rvs.last_name }}
+            </div>
+            <p> <font color = "cream">({{post.pk}}) </font></p>
+    		{% if post.published_date %}
+    		    <div class="date">
+    		        {{ post.published_date }} publised.
+    		    </div>
+    		{% endif %}
         </div>
-        {% endif %}
+
+        <h4><font color="#00bfff">Comments:</font></h4>
+
+        <a class="btn btn-default" href="{% url 'add_comment_to_postJ' pk=post.pk %}">Add comment</a>
+        {% for comment in post.comments.all %}
+            {% if user.is_authenticated or comment.approved_comment %}
+                <div class="comment">
+                    <div class="date">
+                        {{ comment.created_date }}
+                        {% if not comment.approved_comment %}
+                            <a class="btn btn-default" href="{% url 'commentJ_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                            <a class="btn btn-default" href="{% url 'commentJ_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok"></span></a>
+                        {% endif %}
+                    </div>
+                    <strong>{{ comment.author.first_name }}{{ comment.author.last_name }}</strong>
+                    <p>{{ comment.text|linebreaks }}</p>
+                </div>
+            {% endif %}
+        {% empty %}
+                <p>No comments here yet :(</p>
+        {% endfor %}
+        <hr>
+        </div>
     {% empty %}
-        <p>No comments here yet :(</p>
+                    <p> ... </p>
     {% endfor %}
+
 {% endblock %}

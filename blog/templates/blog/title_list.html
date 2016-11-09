@@ -4,51 +4,36 @@
 {% block content %}
     {% if title != None %}
 {#        {% for title in titles %}#}
-            <div class="title">
-                <div class="title">
-                <h1> Title: {{ title.title }}</h1>
-                </div>
-                <div class="subtitle1">
-                <h2> 1. {{ title.subtitle1 }}</h2>
-                </div>
-                <div class="subtitle12">
-                <h2> 2. {{ title.subtitle2 }}</h2>
-                </div>
-                <div class="subtitle3">
-                <h2> 3. {{ title.subtitle3 }}</h2>
-                </div>
-                <div class="subtitle4">
-                <h2> 4. {{ title.subtitle4 }}</h2>
-                </div>
-                <div class="date">
-                    <p>published: {{ title.created_date }} by {{ title.author.first_name }}</p>
-                </div>
-                <br>
-                {% if user.is_authenticated %}
-                    <a class="btn btn-default" id="right" href="{% url 'title_edit'%}">edit</a>
-                {% endif %}
-            </div>
+        <div class="title">
+        <h1> Topic: {{ title.title }}</h1>
+        </div>
+        <div class="subtitle">
+        <h2> 1. {{ title.subtitle1 }}</h2>
+        <h2> 2. {{ title.subtitle2 }}</h2>
+        <h2> 3. {{ title.subtitle3 }}</h2>
+        <h2> 4. {{ title.subtitle4 }}</h2>
+        </div>
+        <div class="date">
+            <p>published: {{ title.created_date }} by {{ title.author.first_name }}</p>
+        </div>
+        <br>
+        {% if user.is_authenticated %}
+            <a class="btn btn-default" id="right" href="{% url 'title_edit'%}">edit</a>
+        {% endif %}
 {#        {% endfor %}#}
     {% else %}
         <div class="title">
-            <h1> Title: 大項目 ... 問題を入力して下さい。</h1>
-            </div>
-            <div class="subtitle1">
+            <h1> Topic: 大項目 ... 問題を入力して下さい。</h1>
+         </div>
+         <div class="subtitle">
             <h2> 1. 小項目</h2>
-            </div>
-            <div class="subtitle12">
             <h2> 2. 小項目</h2>
-            </div>
-            <div class="subtitle3">
             <h2> 3. 小項目</h2>
-            </div>
-            <div class="subtitle4">
             <h2> 4. 小項目</h2>
-            </div>
-            <br>
-            {% if user.is_authenticated %}
-                <a class="btn btn-default" id="right" href="{% url 'title_edit'%}">edit</a>
-            {% endif %}
-        </div>
+         </div>
+         <br>
+        {% if user.is_authenticated %}
+            <a class="btn btn-default" id="right" href="{% url 'title_edit'%}">edit</a>
+        {% endif %}
     {% endif %}
 {% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+     <div class="title">
+     <h2> 最初に、Topicの設定をお願いします。</h2>
+    </div>
+    <a class="btn btn-default" id="right" href="{% url 'title_list' %}">Topicに戻る</a>
+{% endblock %}

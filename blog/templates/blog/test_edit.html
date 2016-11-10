@@ -1,7 +1,16 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-    <h1>{{ form.title }}</h1>
+    <div class="title">
+    <h1>Topic: {{ title }}</h1>
+    </div>
+    {% if kind == '1' %}
+        <h3>授業前に知っている事:</h3>
+    {% else %}
+        <h3>学習結果:</h3>
+    {% endif %}
+    <p>注) このページへの書きこみが見えるのは、自分と先生だけです。</p>
+
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>

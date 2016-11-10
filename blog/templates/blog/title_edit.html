@@ -1,7 +1,8 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-    <h1>Edit title</h1>
+    <h1>Topicの編集</h1>
+    <p>Topic(Title)とJigsaw法エキスパート・グループ用の学習項目(subtitle)を設定してください。</p>
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>

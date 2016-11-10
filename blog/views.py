@@ -234,6 +234,16 @@ def postJ_detail(request, idx):
 def postJ_new(request, idx):
     index = int(idx)
     title = get_object_or_404(Title, pk=currentPK)
+    title_e = title.title
+    if (idx == '1'):
+        subtitle_e = title.subtitle1
+    elif (idx == '2'):
+        subtitle_e = title.subtitle2
+    elif (idx == '3'):
+        subtitle_e = title.subtitle3
+    else:
+        subtitle_e = title.subtitle4
+
     if request.method == "POST":
         form = PostJForm(request.POST)
         if form.is_valid():
@@ -249,11 +259,23 @@ def postJ_new(request, idx):
             return redirect('postJ_detail', idx=idx)
     else:
         form = PostJForm()
-    return render(request, 'blog/postj_edit.html', {'form': form})
+    return render(request, 'blog/postj_edit.html', {'form': form, 'title': title_e, 'subtitle': subtitle_e, 'idx': idx})
 
 @login_required
 def postJ_edit(request, pk):
     post = get_object_or_404(PostJ, pk=pk)
+
+    title_e = post.title_obj.title
+    if(post.sub_index == '1'):
+        subtitle_e = post.title_obj.subtitle1
+    elif (post.sub_index == '2'):
+        subtitle_e = post.title_obj.subtitle2
+    elif (post.sub_index == '3'):
+        subtitle_e = post.title_obj.subtitle3
+    else:
+        subtitle_e = post.title_obj.subtitle4
+    idx = post.sub_index
+
     if request.method == "POST":
         form1 = PostJForm(request.POST, instance=post)
         form2 = PostJForm()
@@ -272,11 +294,11 @@ def postJ_edit(request, pk):
                 comment.post = post2
                 comment.save()
             # index = (int(post.pk) -1) % topic_num +1
-            idx = post.sub_index
+            idx = post2.sub_index
             return redirect('postJ_detail', idx=idx)
     else:
         form = PostJForm(instance=post)
-    return render(request, 'blog/postj_edit.html', {'form': form})
+    return render(request, 'blog/postj_edit.html', {'form': form, 'title': title_e, 'subtitle': subtitle_e, 'idx': idx})
 
 @login_required
 def postJ_publish(request, pk):
@@ -342,6 +364,7 @@ def presen_detail(request):
 @login_required
 def presen_new(request):
     title = get_object_or_404(Title, pk=currentPK)
+    title_e = title.title
     if request.method == "POST":
         form = PresentationForm(request.POST)
         if form.is_valid():
@@ -353,11 +376,12 @@ def presen_new(request):
             return redirect('presen_detail')
     else:
         form = PresentationForm()
-    return render(request, 'blog/presen_edit.html', {'form': form})
+    return render(request, 'blog/presen_edit.html', {'form': form, 'title':title_e})
 
 @login_required
 def presen_edit(request, pk):
     presen = get_object_or_404(Presentation, pk=pk)
+    title_e = presen.title_obj.title
     if request.method == "POST":
         form1 = PresentationForm(request.POST, instance=presen)
         form2 = PresentationForm()
@@ -377,7 +401,7 @@ def presen_edit(request, pk):
             return redirect('presen_detail')
     else:
         form = PresentationForm(instance=presen)
-    return render(request, 'blog/presen_edit.html', {'form': form})
+    return render(request, 'blog/presen_edit.html', {'form': form, 'title': title_e})
 
 @login_required
 def presen_publish(request, pk):
@@ -451,6 +475,7 @@ def test_detail(request, kind):
 @login_required
 def test_new(request, kind):
     title = get_object_or_404(Title, pk=currentPK)
+    title_e = title.title
     if request.method == "POST":
         form = TestForm(request.POST)
         if form.is_valid():
@@ -463,11 +488,13 @@ def test_new(request, kind):
             return redirect('test_detail', kind=kind)
     else:
         form = TestForm()
-    return render(request, 'blog/test_edit.html', {'form': form})
+    return render(request, 'blog/test_edit.html', {'form': form, 'title': title_e, 'kind': kind})
 
 @login_required
 def test_edit(request, pk):
     test = get_object_or_404(Test, pk=pk)
+    title_e = test.title_obj.title
+    kind = test.test_kind
     if request.method == "POST":
         form1 = TestForm(request.POST, instance=test)
         form2 = TestForm()
@@ -484,7 +511,7 @@ def test_edit(request, pk):
             return redirect('test_detail', kind=test2.test_kind)
     else:
         form = TestForm(instance=test)
-    return render(request, 'blog/test_edit.html', {'form': form})
+    return render(request, 'blog/test_edit.html', {'form': form, 'title': title_e, 'kind':kind })
 
 @login_required
 def test_publish(request, pk):
@@ -495,7 +522,7 @@ def test_publish(request, pk):
 @login_required
 def test_remove(request, pk):
     test = get_object_or_404(Test, pk=pk)
-    kind = test.title_kind
+    kind = test.test_kind
     test.delete()
     return redirect('test_detail', kind=kind)
 

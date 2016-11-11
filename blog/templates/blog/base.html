@@ -21,7 +21,7 @@
 		{% endif %}
         <h1><a href="/">Active Learning - Jigsaw</a></h1>
 		{% if user.is_authenticated %}
-            <a class="btn btn-default" id="left" href="{% url 'title_list' %}">Topic</a>
+            <a class="btn btn-default" id="left" href="{% url 'expert_list' %}">Topic+Expert</a>
             <a class="btn btn-default" id="left" href="{% url 'test_detail' kind=1 %}">Test1</a>
             <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=1 %}">1</a>
             <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=2 %}">2</a>
@@ -29,6 +29,10 @@
             <a class="btn btn-default" id="left" href="{% url 'postJ_detail' idx=4 %}">4</a>
             <a class="btn btn-default" id="left" href="{% url 'presen_detail' %}">Presentation</a>
             <a class="btn btn-default" id="left" href="{% url 'test_detail' kind=2 %}">Test2</a>
+        {% endif %}
+
+		{% if user.is_authenticated and user.is_staff %}
+            <a class="btn btn-default" id="right" href="{% url 'title_list' %}">Topic</a>
         {% endif %}
     </div>
 

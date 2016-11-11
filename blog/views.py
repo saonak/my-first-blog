@@ -5,16 +5,19 @@ from django.contrib.auth.decorators import login_required
 from .models import Post
 from .models import Post2, Comment
 from .models import Title, PostJ, CommentJ, Presentation, Test, CommentP
+from .models import Expert
 from .forms import PostForm
 from .forms import PostForm2, CommentForm
 from .forms import TitleForm, PostJForm, CommentJForm, PresentationForm, TestForm, CommentPForm
+from .forms import ExpertForm
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from itertools import chain
-
-# Global parameter
+from django import forms
+from django.http import HttpResponseRedirect
+# Global variable
 currentPK = 1  # PK number for current topic
 topic_num = 4  # how many of the subtitle
 
@@ -158,15 +161,82 @@ def comment_remove(request, pk):
     return redirect('post_detail', pk=post_pk)
 
 def title_list(request):
+    global currentPK
+
     try:
         title = Title.objects.get(pk=currentPK)
     except ObjectDoesNotExist:
-        title = None
+        try:
+            title = Title.objects.all().latest('created_date')
+            currentPK = title.pk
+        except ObjectDoesNotExist:
+            title = None
+
+    if request.method == "POST":
+        form = TestForm(request.POST)
+        # if form.is_valid():
+            # testnum = form.save()
+        tmppk = form.data['titlenum']
+        currentPK = int(tmppk)
+        return redirect('title_list')
+        # return HttpResponseRedirect('/title/')
+    else:
+        titles = Title.objects.all().values_list('pk', 'title').order_by('pk')
+        form = TestForm(initial={'titlenum': currentPK})
+        form.fields.get('titlenum').choices = titles
+        return render(request, 'blog/title_list.html', {'title': title, 'currentPK':currentPK, 'form':form})
+
+@login_required
+def title_new(request):
+    if request.method == "POST":
+        form = TitleForm(request.POST)
+        if form.is_valid():
+            titles = form.save(commit=False)
+            titles.author = request.user
+            titles.save()
+            titles.publish()
+            return redirect('title_list')
+    else:
+        form = TitleForm()
+        return render(request, 'blog/title_edit.html', {'form': form})
+
+@login_required
+def title_edit(request, pk):
+    title = Title.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = TitleForm(request.POST, instance=title)
+        if form.is_valid():
+            titles = form.save(commit=False)
+            titles.author = request.user
+            titles.save()
+            titles.publish()
+            return redirect('title_list')
+    else:
+        form = TitleForm(instance=title)
+        return render(request, 'blog/title_edit.html', {'form': form})
+
+@login_required
+def title_remove(request, pk):
+    title = get_object_or_404(Title, pk=pk)
+    title.delete()
+    # index = (int(pk) -1) % topic_num +1
+    return redirect('title_list')
+
+def title_err(request):
+    return render(request, 'blog/title_err.html', {})
+
+@login_required
+def expert_list(request):
+    try:
+        title = Title.objects.get(pk=currentPK)
+    except ObjectDoesNotExist:
+        return redirect('title_err')
 
     return render(request, 'blog/title_list.html', {'title': title})
 
 @login_required
-def title_edit(request):
+def expert_edit(request):
     try:
         title = Title.objects.get(pk=currentPK)
     except ObjectDoesNotExist:
@@ -189,9 +259,6 @@ def title_edit(request):
         else:
             form = TitleForm(instance=title)
     return render(request, 'blog/title_edit.html', {'form': form})
-
-def title_err(request):
-    return render(request, 'blog/title_err.html', {})
 
 def postJ_detail(request, idx):
     index = int(idx)

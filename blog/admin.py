@@ -1,6 +1,7 @@
 from django.contrib import admin
 # from .models import Post, Post2, Comment
 from .models import Title, PostJ, CommentJ, Presentation, CommentP, Test
+from .models import Expert
 
 # Register your models here.
 
@@ -13,3 +14,4 @@ admin.site.register(CommentJ)
 admin.site.register(Presentation)
 admin.site.register(CommentP)
 admin.site.register(Test)
+admin.site.register(Expert)

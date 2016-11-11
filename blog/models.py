@@ -166,3 +166,17 @@ class Presentation(models.Model):
 
     def approved_comments(self):
         return self.comments.filter(approved_comment=True)
+
+class Expert(models.Model):
+    title_obj = models.ForeignKey('blog.Title', related_name='expert_ref', default=None)
+    ttl_index = models.CharField(max_length=4, default='1',)
+    group = models.ForeignKey('auth.Group', related_name='expert', default=None)
+    user1 = models.ForeignKey('auth.User', related_name='expert1', default=None)
+    user2 = models.ForeignKey('auth.User', related_name='expert2', default=None)
+    user3 = models.ForeignKey('auth.User', related_name='expert3', default=None)
+    user4 = models.ForeignKey('auth.User', related_name='expert4', default=None)
+    created_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title_obj.title + "_" + self.group.name + "_" + str(self.pk)
+

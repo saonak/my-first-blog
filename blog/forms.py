@@ -1,8 +1,11 @@
 from django import forms
+from django.forms.fields import DateField, ChoiceField, MultipleChoiceField
+from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 
 from .models import Post
 from .models import Post2, Comment
 from .models import Title, PostJ, CommentJ, Presentation, Test, CommentP
+from .models import Expert
 
 
 class PostForm(forms.ModelForm):
@@ -62,3 +65,18 @@ class CommentPForm(forms.ModelForm):
         model = CommentP
 #        fields = ('author', 'text',)
         fields = ('text',)
+
+class ExpertForm(forms.ModelForm):
+
+    class Meta:
+        model = Expert
+        fields = ('user1','user2','user3','user4')
+
+class TestForm(forms.Form):
+    titlenum = forms.ChoiceField(
+        label = 'Topicの選択',
+        initial= '1',
+        widget = forms.Select,
+        choices = (),
+        required = False,
+    )

@@ -70,13 +70,16 @@ class ExpertForm(forms.ModelForm):
 
     class Meta:
         model = Expert
-        fields = ('user1','user2','user3','user4')
+        fields = ('group','user1','user2','user3','user4')
 
-class TestForm(forms.Form):
-    titlenum = forms.ChoiceField(
-        label = 'Topicの選択',
-        initial= '1',
-        widget = forms.Select,
-        choices = (),
-        required = False,
-    )
+class ExpertFormGroup(forms.Form):
+    group = forms.ChoiceField(label='Groupの選択', widget=forms.Select, choices=(), required=False, )
+
+class ExpertFormUser(forms.Form):
+    user1 = forms.ChoiceField(label='Expertの選択', widget=forms.Select, choices=(), required=False, )
+    user2 = forms.ChoiceField(label='Expertの選択', widget=forms.Select, choices=(), required=False, )
+    user3 = forms.ChoiceField(label='Expertの選択', widget=forms.Select, choices=(), required=False, )
+    user4 = forms.ChoiceField(label='Expertの選択', widget=forms.Select, choices=(), required=False, )
+
+class TopicSelForm(forms.Form):
+    titlenum = forms.ChoiceField( label = 'Topicの選択', initial= '1', widget = forms.Select, choices = (), required = False,)

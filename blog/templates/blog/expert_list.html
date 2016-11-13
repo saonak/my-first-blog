@@ -1,0 +1,71 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+
+{#    {% for expert in experts %}#}
+    <div ><h3>Expert活動の担当を決める：</h3></div>
+    {% if admin_flag == 1 %}
+        <form method="POST" class="">{% csrf_token %}
+            <button type="submit" class="save btn btn-default">OK</button>
+            <div class="note"> <p>選択したらOK ⇒</p></div>
+            <h3>{{ form.as_p }}</h3>
+        </form>
+    {% else %}
+        <h4 align="left">Group: {{ group_name }}</h4>
+    {% endif %}
+    <hr>
+    {% if expert != None %}
+        {% if user.is_authenticated %}
+            <a class="btn btn-default" id="right" href="{% url 'expert_remove' pk=expert.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="btn btn-default" id="right" href="{% url 'expert_edit' pk=expert.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+        {% endif %}
+        <br>
+        <div class="title">
+        <h1> Topic: {{ title.title }}</h1>
+        </div>
+
+        <div class="subtitle">
+            <h2> 1. {{ title.subtitle1 }}</h2>
+            <div class = "expert">
+                <h3>担当: {{ expert.user1.first_name }} {{ expert.user1.last_name }}</h3>
+            </div>
+            <h2> 2. {{ title.subtitle2 }}</h2>
+            <div class = "expert">
+                <h3>担当: {{ expert.user2.first_name }} {{ expert.user2.last_name }}</h3>
+            </div>
+            <h2> 3. {{ title.subtitle3 }}</h2>
+            <div class = "expert">
+                <h3>担当: {{ expert.user3.first_name }} {{ expert.user3.last_name }}</h3>
+            </div>
+            <h2> 4. {{ title.subtitle4 }}</h2>
+            <div class = "expert">
+                <h3>担当: {{ expert.user4.first_name }} {{ expert.user4.last_name }}</h3>
+            </div>
+        </div>
+        <div class="date">
+            <p>published: {{ expert.created_date }} by {{ expert.author.first_name }}</p>
+        </div>
+        <br>
+{#    {% empty %}#}
+    {% else %}
+        <div class="title">
+        <h1> Topic: {{ title.title }}</h1>
+        </div>
+
+        <div class="subtitle">
+            <h2> 1. {{ title.subtitle1 }}</h2>
+            <h2> 2. {{ title.subtitle2 }}</h2>
+            <h2> 3. {{ title.subtitle3 }}</h2>
+            <h2> 4. {{ title.subtitle4 }}</h2>
+        </div>
+{#    {% endfor %}#}
+    {% endif %}
+    {% if user.is_authenticated%}
+        {% if pbtn != 0 %}
+            <br><hr><br>
+            <a class="btn btn-default" id="right" href="{% url 'expert_new'%}"><span class="glyphicon glyphicon-plus"></span></a>
+            <div class="note"><p>新しいExpert担当リストの追加 ⇒</p></div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

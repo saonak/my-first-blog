@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <form method="POST" class="post-form">{% csrf_token %}
+
+        <h3>Expertの設定: </h3>
+        <h4 align="left">Group: {{ group_name }}</h4>
+        <hr>
+
+        <div class="title">
+            <h1>Topic: {{ title.title }}</h1>
+        </div>
+        <div class="subtitle_e">
+            <h2>1. {{ title.subtitle1 }}</h2>
+            <div class="expert"> <h3>担当: {{ form.user1 }}</h3> </div>
+            <h2>2. {{ title.subtitle2 }}</h2>
+            <div class="expert"><h3>担当: {{ form.user2 }}</h3> </div>
+            <h2>3. {{ title.subtitle3 }}</h2>
+            <div class="expert"><h3>担当: {{ form.user3 }}</h3> </div>
+            <h2>4. {{ title.subtitle4 }}</h2>
+            <div class="expert"><h3>担当: {{ form.user4 }}</h3> </div>
+        </div>
+
+        　  <br>
+
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{% endblock %}

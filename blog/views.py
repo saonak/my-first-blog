@@ -9,16 +9,18 @@ from .models import Expert
 from .forms import PostForm
 from .forms import PostForm2, CommentForm
 from .forms import TitleForm, PostJForm, CommentJForm, PresentationForm, TestForm, CommentPForm
-from .forms import ExpertForm
+from .forms import TopicSelForm, ExpertForm, ExpertFormGroup, ExpertFormUser
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from itertools import chain
 from django import forms
 from django.http import HttpResponseRedirect
 # Global variable
-currentPK = 1  # PK number for current topic
+currentPK = 1  # current Title pk
+currentGR = 1  # current Group pk used in expert_list
 topic_num = 4  # how many of the subtitle
 
 # Create your views here.
@@ -173,7 +175,7 @@ def title_list(request):
             title = None
 
     if request.method == "POST":
-        form = TestForm(request.POST)
+        form = TopicSelForm(request.POST)
         # if form.is_valid():
             # testnum = form.save()
         tmppk = form.data['titlenum']
@@ -182,7 +184,7 @@ def title_list(request):
         # return HttpResponseRedirect('/title/')
     else:
         titles = Title.objects.all().values_list('pk', 'title').order_by('pk')
-        form = TestForm(initial={'titlenum': currentPK})
+        form = TopicSelForm(initial={'titlenum': currentPK})
         form.fields.get('titlenum').choices = titles
         return render(request, 'blog/title_list.html', {'title': title, 'currentPK':currentPK, 'form':form})
 
@@ -228,44 +230,165 @@ def title_err(request):
 
 @login_required
 def expert_list(request):
+    global currentPK, currentGR
+
     try:
         title = Title.objects.get(pk=currentPK)
     except ObjectDoesNotExist:
-        return redirect('title_err')
+        try:
+            title = Title.objects.all().latest('created_date')
+            currentPK = title.pk
+        except ObjectDoesNotExist:
+            return redirect('title_err')
 
-    return render(request, 'blog/title_list.html', {'title': title})
+    admin_u = User.objects.get(username='admin')
+    admin_flag = 0
+    pbtn = 0
+    expert_list = []
+
+    if request.user == admin_u:
+        admin_flag = 1
+        if request.method == "POST":
+            form = ExpertFormGroup(request.POST)
+            currentGR = int(form.data['group'])
+            return redirect('expert_list')
+
+        else:
+            groups = Group.objects.all().values_list('pk', 'name').order_by('pk')
+            form = ExpertFormGroup(initial={'group': currentGR})
+            form.fields.get('group').choices = groups
+            group = Group.objects.get(pk=currentGR)
+            group_name = group.name
+            try:
+                expert = ((Expert.objects.filter(ttl_index=str(currentPK)).filter(group = group).latest('created_date')))
+            except ObjectDoesNotExist:
+                expert = None
+                pbtn = 1
+
+            return render(request, 'blog/expert_list.html', {'title': title, 'expert': expert, 'admin_flag':admin_flag, 'group_name':group_name, 'form': form, 'pbtn':pbtn})
+
+    else:
+        for group in request.user.groups.all():
+            group_name = group.name
+
+        try:
+            expert = ((Expert.objects.filter(ttl_index=str(currentPK)).filter(group__in=request.user.groups.all()).latest('created_date')))
+        except ObjectDoesNotExist:
+            expert = None
+            pbtn = 1
+
+        return render(request, 'blog/expert_list.html', {'title': title, 'expert': expert, 'admin_flag':admin_flag, 'group_name':group_name, 'pbtn':pbtn})
 
 @login_required
-def expert_edit(request):
-    try:
-        title = Title.objects.get(pk=currentPK)
-    except ObjectDoesNotExist:
-        title = None
+def expert_new(request):
+    global currentPK, currentGR
+
+    title = get_object_or_404(Title, pk=currentPK)
+
+    admin_u = User.objects.get(username='admin')
+
     if request.method == "POST":
-        if title == None:
-            form = TitleForm(request.POST)
+        form1 = ExpertFormUser(request.POST)
+        form2 = ExpertForm()
+        expert2 = form2.save(commit=False)
+        user1_post = int(form1.data['user1'])
+        user2_post = int(form1.data['user2'])
+        user3_post = int(form1.data['user3'])
+        user4_post = int(form1.data['user4'])
+        expert2.author = request.user
+        expert2.title_obj = title
+        expert2.ttl_index = title.pk
+        if request.user == admin_u:
+            expert2.group = Group.objects.get(pk=currentGR)
         else:
-            form = TitleForm(request.POST, instance=title)
-        if form.is_valid():
-            titles = form.save(commit=False)
-            titles.author = request.user
-            titles.pk = currentPK
-            titles.save()
-            titles.publish()
-            return redirect('title_list')
+            gname_list = []
+            for group in request.user.groups.all():
+                gname_list.append(group.name)
+            expert2.group = Group.objects.filter(name__in=gname_list).first()
+        expert2.user1 = User.objects.get(pk=user1_post)
+        expert2.user2 = User.objects.get(pk=user2_post)
+        expert2.user3 = User.objects.get(pk=user3_post)
+        expert2.user4 = User.objects.get(pk=user4_post)
+        expert2.save()
+        return redirect('expert_list')
     else:
-        if title == None:
-            form = TitleForm()
+        uname_list=[]
+        if request.user == admin_u:
+            group = Group.objects.get(pk=currentGR)
+            group_name = group.name
+            for user in group.user_set.all():
+                uname_list.append(user.username)
         else:
-            form = TitleForm(instance=title)
-    return render(request, 'blog/title_edit.html', {'form': form})
+            for group in request.user.groups.all():
+                group_name = group.name
+                for user in group.user_set.all():
+                    uname_list.append(user.username)
+
+        users = User.objects.filter(username__in=uname_list).values_list('pk', 'last_name').order_by('pk')
+        form = ExpertFormUser()
+        form.fields.get('user1').choices = users
+        form.fields.get('user2').choices = users
+        form.fields.get('user3').choices = users
+        form.fields.get('user4').choices = users
+        return render(request, 'blog/expert_edit.html', {'form': form, 'title': title, 'group_name':group_name})
+
+@login_required
+def expert_edit(request, pk):
+    expert = get_object_or_404(Expert, pk=pk)
+    title = expert.title_obj
+
+    if request.method == "POST":
+        form1 = ExpertFormUser(request.POST)
+        form2 = ExpertForm()
+        # if form1.is_valid():
+        #     expert1 = form1.save(commit=False)
+        expert2 = form2.save(commit=False)
+        user1_post = int(form1.data['user1'])
+        user2_post = int(form1.data['user2'])
+        user3_post = int(form1.data['user3'])
+        user4_post = int(form1.data['user4'])
+        expert2.author = request.user
+        expert2.title_obj = expert.title_obj
+        expert2.ttl_index = expert.ttl_index
+        expert2.group = expert.group
+        expert2.user1 = User.objects.get(pk=user1_post)
+        expert2.user2 = User.objects.get(pk=user2_post)
+        expert2.user3 = User.objects.get(pk=user3_post)
+        expert2.user4 = User.objects.get(pk=user4_post)
+        expert2.save()
+        return redirect('expert_list')
+    else:
+        username_list = []
+        group = expert.group
+        group_name = group.name
+        for user in group.user_set.all():
+            username_list.append(user.username)
+
+        users = User.objects.filter(username__in=username_list).values_list('pk', 'last_name').order_by('pk')
+        form = ExpertFormUser(initial={'group': expert.group.pk, 'user1':expert.user1.pk,'user2':expert.user2.pk,'user3':expert.user3.pk,'user4':expert.user4.pk, })
+        form.fields.get('user1').choices = users
+        form.fields.get('user2').choices = users
+        form.fields.get('user3').choices = users
+        form.fields.get('user4').choices = users
+        return render(request, 'blog/expert_edit.html', {'form': form, 'title': title, 'group_name':group_name})
+
+@login_required
+def expert_remove(request, pk):
+    expert = get_object_or_404(Expert, pk=pk)
+    expert.delete()
+    return redirect('expert_list')
 
 def postJ_detail(request, idx):
+    global currentPK
     index = int(idx)
     try:
         title = Title.objects.get(pk=currentPK)
     except ObjectDoesNotExist:
-        return redirect('title_err')
+        try:
+            title = Title.objects.all().latest('created_date')
+            currentPK = title.pk
+        except ObjectDoesNotExist:
+            return redirect('title_err')
 
     admin_u = User.objects.get(username='admin')
 
@@ -299,6 +422,7 @@ def postJ_detail(request, idx):
 
 @login_required
 def postJ_new(request, idx):
+    global currentPK
     index = int(idx)
     title = get_object_or_404(Title, pk=currentPK)
     title_e = title.title
@@ -416,10 +540,15 @@ def commentJ_remove(request, pk):
     return redirect('postJ_detail', idx=idx)
 
 def presen_detail(request):
+    global currentPK
     try:
         title = Title.objects.get(pk=currentPK)
     except ObjectDoesNotExist:
-        return redirect('title_err')
+        try:
+            title = Title.objects.all().latest('created_date')
+            currentPK = title.pk
+        except ObjectDoesNotExist:
+            return redirect('title_err')
 
     try:
         presen = ((Presentation.objects.filter(ttl_index=str(currentPK)).latest('created_date')) )
@@ -430,6 +559,8 @@ def presen_detail(request):
 
 @login_required
 def presen_new(request):
+    global currentPK
+
     title = get_object_or_404(Title, pk=currentPK)
     title_e = title.title
     if request.method == "POST":
@@ -510,10 +641,15 @@ def commentP_remove(request, pk):
 
 @login_required
 def test_detail(request, kind):
+    global currentPK
     try:
         title = Title.objects.get(pk=currentPK)
     except ObjectDoesNotExist:
-        return redirect('title_err')
+        try:
+            title = Title.objects.all().latest('created_date')
+            currentPK = title.pk
+        except ObjectDoesNotExist:
+            return redirect('title_err')
 
     admin_u = User.objects.get(username='admin')
 
@@ -541,6 +677,7 @@ def test_detail(request, kind):
 
 @login_required
 def test_new(request, kind):
+    global currentPK
     title = get_object_or_404(Title, pk=currentPK)
     title_e = title.title
     if request.method == "POST":

@@ -168,6 +168,7 @@ class Presentation(models.Model):
         return self.comments.filter(approved_comment=True)
 
 class Expert(models.Model):
+    author = models.ForeignKey('auth.User', related_name='expert_author', default=None)
     title_obj = models.ForeignKey('blog.Title', related_name='expert_ref', default=None)
     ttl_index = models.CharField(max_length=4, default='1',)
     group = models.ForeignKey('auth.Group', related_name='expert', default=None)

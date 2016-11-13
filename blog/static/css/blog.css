@@ -1,5 +1,5 @@
 .page-header {
-#    background-color: #ff9400;
+    /*background-color: #ff9400;*/
     background-color: lightskyblue;
     margin-top: 0;
     padding: 20px 20px 20px 40px;
@@ -35,6 +35,13 @@ h1, h2, h3, h4 {
     color: indianred;
     float: right;
     margin-right: 50px;
+    /*font-size: 10pt;*/
+}
+.expert {
+    color: darkblue;
+    /*float: right;*/
+    /*text-align: center;*/
+    margin-left: 200px;
     /*font-size: 10pt;*/
 }
 

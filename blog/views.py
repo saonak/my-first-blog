@@ -365,7 +365,7 @@ def expert_edit(request, pk):
             username_list.append(user.username)
 
         users = User.objects.filter(username__in=username_list).values_list('pk', 'last_name').order_by('pk')
-        form = ExpertFormUser(initial={'group': expert.group.pk, 'user1':expert.user1.pk,'user2':expert.user2.pk,'user3':expert.user3.pk,'user4':expert.user4.pk, })
+        form = ExpertFormUser(initial={'user1':expert.user1.pk,'user2':expert.user2.pk,'user3':expert.user3.pk,'user4':expert.user4.pk, })
         form.fields.get('user1').choices = users
         form.fields.get('user2').choices = users
         form.fields.get('user3').choices = users

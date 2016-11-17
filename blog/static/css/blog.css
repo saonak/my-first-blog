@@ -16,7 +16,9 @@
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Niagara Engraved', cursive;
+    font-family: "Baskerville Old Face", cursive;
+    /*font-family: "MS UI Gothic", sans-serif;*/
+    /*font-family: "Lobster", cursive;*/
 }
 
 .date {

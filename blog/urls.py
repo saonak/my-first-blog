@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views
+from blog.views import PostJDelete
 
 urlpatterns = [
     url(r'^$', views.presen_detail, name='presen_detail'),
@@ -25,7 +26,8 @@ urlpatterns = [
     url(r'^postj/(?P<pk>\d+)/edit/$', views.postJ_edit, name='postJ_edit'),
     url(r'^postj/(?P<idx>\d+)/new/$', views.postJ_new, name='postJ_new'),
     url(r'^postj/(?P<pk>\d+)/publish/$', views.postJ_publish, name='postJ_publish'),
-	url(r'^postj/(?P<pk>\d+)/remove/$', views.postJ_remove, name='postJ_remove'),
+    url(r'^postj/(?P<pk>\d+)/delete/$', PostJDelete.as_view(), name='postj_deleteview'),
+    url(r'^postj/(?P<pk>\d+)/remove/$', views.postJ_remove, name='postJ_remove'),
     url(r'^postj/(?P<pk>\d+)/comment/$', views.add_comment_to_postJ, name='add_comment_to_postJ'),
     url(r'^commentj/(?P<pk>\d+)/approve/$', views.commentJ_approve, name='commentJ_approve'),
     url(r'^commentj/(?P<pk>\d+)/remove/$', views.commentJ_remove, name='commentJ_remove'),

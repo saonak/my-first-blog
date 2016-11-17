@@ -1,29 +1,48 @@
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .models import Post
-from .models import Post2, Comment
-from .models import Title, PostJ, CommentJ, Presentation, Test, CommentP
-from .models import Expert
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from django.shortcuts import redirect
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.views.generic import ListView
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
+
 from .forms import PostForm
 from .forms import PostForm2, CommentForm
 from .forms import TitleForm, PostJForm, CommentJForm, PresentationForm, TestForm, CommentPForm
 from .forms import TopicSelForm, ExpertForm, ExpertFormGroup, ExpertFormUser
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
-from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
-from itertools import chain
-from django import forms
-from django.http import HttpResponseRedirect
+from .models import Expert
+from .models import Post
+from .models import Post2, Comment
+from .models import Title, PostJ, CommentJ, Presentation, Test, CommentP
+
 # Global variable
 currentPK = 1  # current Title pk
 currentGR = 1  # current Group pk used in expert_list
 topic_num = 4  # how many of the subtitle
 
 # Create your views here.
+
+class PostJDelete(DeleteView):
+    model = PostJ
+    # success_url = reverse_lazy('postJ_detail', args={1})
+    # template_name = "blog/postj_confirm_delete.html"
+    # paginate_by = 5  # 5毎分割
+    def get_success_url(self):
+        idx = self.object.sub_index
+        return reverse_lazy('postJ_detail', args={idx})
+    # def post(self, request, pk):
+    #     post = get_object_or_404(PostJ, pk=pk)
+    #     idx = post.sub_index
+    #     if "cancel" in request.POST:
+    #         url = self.get_success_url(self)
+    #         return HttpResponseRedirect(url)
+    #     else:
+    #         return super(PostJDelete, self).post(request, pk)
 
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
@@ -59,7 +78,7 @@ def post_edit(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
-    
+
 @login_required
 def post_draft_list(request):
     posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
@@ -113,7 +132,7 @@ def post_edit2(request, pk):
     else:
         form = PostForm2(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
-    
+
 @login_required
 def post_draft_list2(request):
     admin_user= User.objects.get(username='admin')

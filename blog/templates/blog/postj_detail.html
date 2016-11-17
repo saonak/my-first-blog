@@ -1,7 +1,16 @@
 {% extends 'blog/base.html' %}
 {% load markdown_deux_tags %}
-
 {% block content %}
+{#    <script type="text/javascript">#}
+{#        function clicked() {#}
+{#            if (confirm('Do you want to submit?')) {#}
+{#                yourformelement.submit();#}
+{#            } else {#}
+{#                return false;#}
+{#            }#}
+{#        }#}
+{#    </script>#}
+
     {% if pbtn == 1 %}
         <a class="btn btn-default" id="right" href="{% url 'postJ_new' idx=idx %}"><span class="glyphicon glyphicon-plus"></span></a>
 　      <div class="note"> <p>自分が担当する書き込みを始める時⇒</p></div>
@@ -30,7 +39,8 @@
         <div class="onepost"> <div class="post">
             {% if user.is_authenticated%}
 {#                {% if user.username == 'admin' or user.username == post.author.username %}#}
-                <a class="btn btn-default" id="right" href="{% url 'postJ_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+{#                <a class="btn btn-default" id="right" onclick="clicked()" href="{% url 'postJ_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>#}
+                <a class="btn btn-default" id="right" href="{% url 'postj_deleteview' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                 <a class="btn btn-default" id="right" href="{% url 'postJ_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
 {#                <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>#}
 {#                {% endif %}#}

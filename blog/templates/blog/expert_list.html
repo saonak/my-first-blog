@@ -17,7 +17,7 @@
     <hr>
     {% if expert != None %}
         {% if user.is_authenticated %}
-            <a class="btn btn-default" id="right" href="{% url 'expert_remove' pk=expert.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="btn btn-default" id="right" href="{% url 'expert_deleteview' pk=expert.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
             <a class="btn btn-default" id="right" href="{% url 'expert_edit' pk=expert.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
         {% endif %}
         <br>

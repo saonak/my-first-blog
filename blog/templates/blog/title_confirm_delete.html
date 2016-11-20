@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+    <form action="" method="post">{% csrf_token %}
+        <font color="red"> <p>このExpert担当リストを削除してよろしいですか ?</p> </font>
+        <hr>
+        <h5>1. {{ object.user1.first_name }} {{ object.user1.last_name }}</h5>
+        <h5>2. {{ object.user2.first_name }} {{ object.user2.last_name }}</h5>
+        <h5>3. {{ object.user3.first_name }} {{ object.user3.last_name }}</h5>
+        <h5>4. {{ object.user4.first_name }} {{ object.user4.last_name }}</h5>
+        <hr>
+        <input type="submit" value="はい削除します" class="btn btn-default" /> &emsp;&emsp;&emsp;
+{#        <input type="submit" name="cancel" value="Cancel" />#}
+        <button onclick="window.history.back();" class="btn btn-default" type="button">Cancel</button>
+    </form>
+{% endblock %}

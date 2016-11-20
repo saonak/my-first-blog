@@ -1,0 +1,18 @@
+{% extends 'blog/base.html' %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+    <form action="" method="post">{% csrf_token %}
+        <font color="red"> <p>この内容を削除してよろしいですか ?</p> </font>
+        <hr>
+        {% if object.f_choice == 'MARKDOWN' %}
+            <p>{{ object.text|truncatechars:50 | markdown }}</p>
+        {% else %}
+            <p>{{ object.text|truncatechars:50 | linebreaksbr }}</p>
+        {% endif %}
+        <hr>
+        <input type="submit" value="はい削除します" class="btn btn-default" /> &emsp;&emsp;&emsp;
+{#        <input type="submit" name="cancel" value="Cancel" />#}
+        <button onclick="window.history.back();" class="btn btn-default" type="button">Cancel</button>
+    </form>
+{% endblock %}

@@ -27,6 +27,27 @@ topic_num = 4  # how many of the subtitle
 
 # Create your views here.
 
+class PresenDelete(DeleteView):
+    model = Presentation
+    def get_success_url(self):
+        return reverse_lazy('presen_detail')
+
+class TestDelete(DeleteView):
+    model = Test
+    def get_success_url(self):
+        kind = self.object.test_kind
+        return reverse_lazy('test_detail', args={kind})
+
+class ExpertDelete(DeleteView):
+    model = Expert
+    def get_success_url(self):
+        return reverse_lazy('expert_list')
+
+class TitleDelete(DeleteView):
+    model = Title
+    def get_success_url(self):
+        return reverse_lazy('title_list')
+
 class PostJDelete(DeleteView):
     model = PostJ
     # success_url = reverse_lazy('postJ_detail', args={1})

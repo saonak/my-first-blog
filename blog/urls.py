@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-from blog.views import PostJDelete
+from blog.views import PostJDelete, TitleDelete, ExpertDelete, PresenDelete, TestDelete
 
 urlpatterns = [
     url(r'^$', views.presen_detail, name='presen_detail'),
@@ -16,11 +16,13 @@ urlpatterns = [
     url(r'^title$', views.title_list, name='title_list'),
     url(r'^title/new/$', views.title_new, name='title_new'),
     url(r'^title/(?P<pk>\d+)/edit/$', views.title_edit, name='title_edit'),
+    url(r'^title/(?P<pk>\d+)/delete/$', TitleDelete.as_view(), name='title_deleteview'),
     url(r'^title/(?P<pk>\d+)/remove/$', views.title_remove, name='title_remove'),
     url(r'^title/err/$', views.title_err, name='title_err'),
     url(r'^expert$', views.expert_list, name='expert_list'),
     url(r'^expert/new/$', views.expert_new, name='expert_new'),
     url(r'^expert/(?P<pk>\d+)/edit/$', views.expert_edit, name='expert_edit'),
+    url(r'^expert/(?P<pk>\d+)/delete/$', ExpertDelete.as_view(), name='expert_deleteview'),
     url(r'^expert/(?P<pk>\d+)/remove/$', views.expert_remove, name='expert_remove'),
     url(r'^postj/(?P<idx>\d+)$', views.postJ_detail, name='postJ_detail'),
     url(r'^postj/(?P<pk>\d+)/edit/$', views.postJ_edit, name='postJ_edit'),
@@ -35,7 +37,8 @@ urlpatterns = [
     url(r'^presen/(?P<pk>\d+)/edit/$', views.presen_edit, name='presen_edit'),
     url(r'^presen/new/$', views.presen_new, name='presen_new'),
     url(r'^presen/(?P<pk>\d+)/publish/$', views.presen_publish, name='presen_publish'),
-	url(r'^presen/(?P<pk>\d+)/remove/$', views.presen_remove, name='presen_remove'),
+    url(r'^presen/(?P<pk>\d+)/delete/$', PresenDelete.as_view(), name='presen_deleteview'),
+    url(r'^presen/(?P<pk>\d+)/remove/$', views.presen_remove, name='presen_remove'),
     url(r'^presen/(?P<pk>\d+)/comment/$', views.add_comment_to_presen, name='add_comment_to_presen'),
     url(r'^commentP/(?P<pk>\d+)/approve/$', views.commentP_approve, name='commentP_approve'),
     url(r'^commentP/(?P<pk>\d+)/remove/$', views.commentP_remove, name='commentP_remove'),
@@ -43,6 +46,7 @@ urlpatterns = [
     url(r'^test/(?P<pk>\d+)/edit/$', views.test_edit, name='test_edit'),
     url(r'^test/(?P<kind>\d+)/new/$', views.test_new, name='test_new'),
     url(r'^test/(?P<pk>\d+)/publish/$', views.test_publish, name='test_publish'),
-	url(r'^test/(?P<pk>\d+)/remove/$', views.test_remove, name='test_remove'),
+    url(r'^test/(?P<pk>\d+)/delete/$', TestDelete.as_view(), name='test_deleteview'),
+    url(r'^test/(?P<pk>\d+)/remove/$', views.test_remove, name='test_remove'),
 ]
 

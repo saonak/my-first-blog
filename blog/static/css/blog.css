@@ -11,6 +11,16 @@
     text-decoration: none;
 }
 
+/*.top-menu, .top-menu:hover, .top-menu:visited {*/
+.top-menu {
+    color: #ffffff;
+    text-align: right;
+    display: block;
+    width: 100%;
+    font-size: 24pt;
+    margin-right: 20px;
+}
+
 .content {
     margin-left: 40px;
 }
@@ -56,13 +66,6 @@ h1, h2, h3, h4 {
     width: 100%;
 }
 
-.top-menu, .top-menu:hover, .top-menu:visited {
-    color: #ffffff;
-    float: right;
-    font-size: 26pt;
-    margin-right: 20px;
-}
-
 .onepost {
     margin-bottom: 50px;
 }
@@ -106,4 +109,6 @@ h1, h2, h3, h4 {
 .box_presen {
 	border: 3px solid #ddffdd ;
     background: #f9f9fb;
+    min-width : 750px;
+    merging_right : 20px;
 }

@@ -30,7 +30,7 @@
             <div class="post">
                 {% if user.is_authenticated%}
                     {#                {% if user.username == 'admin' or user.username == post.author.username %}#}
-                    <a class="btn btn-default" id="right" href="{% url 'presen_remove' pk=presen.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a class="btn btn-default" id="right" href="{% url 'presen_deleteview' pk=presen.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
                     <a class="btn btn-default" id="right" href="{% url 'presen_edit' pk=presen.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
 {#                    <a class="btn btn-default" id="right" href="{% url 'postJ_publish' pk=post.pk %}">Publish</a>#}
                     {#                {% endif %}#}
